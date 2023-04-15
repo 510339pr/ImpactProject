@@ -1,10 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from numpy import random
 import itertools as it
 
 def gen_list_val(length,scale):
-    return np.around((random.uniform(low=0.1, high=1.0,size=(length))*10)).tolist()
+    return np.around((random.uniform(low=0.1, high=1.0,size=(length))*scale)).tolist()
 
 
 def lin_equ(l1, l2):
@@ -78,6 +79,9 @@ def plot_innovations(i,seq_c, seq_a, C_agi, A_aligned, sort = False):
         ax.set_xlim([0, max(seq_c) + 2])
         ax.set_ylim([0, max(seq_a) + 2])
 
+    ax.set_xlim([0, C_agi + 10])
+    ax.set_ylim([0, A_aligned + 10])
+
     ax.axhline(y=A_aligned, color='g')
     ax.axvline(x=C_agi, color='r')
 
@@ -147,3 +151,31 @@ def optimal_path_rc(df, C_agi, A_aligned, t):
         left_innovations = list(set(range(1,len(df)+1)) - set(current_path))
         current_path.append(best_step(left_innovations, df))
         return current_path
+    
+
+def genr_game_needs(stages, scale):
+    # Generate capabilities and alignment values 
+
+    # define start values and predefined knowledge 
+    # table amount of innovations, capabilities & alignment
+    inno = list(range(1,stages+1))
+    c = gen_list_val(stages,scale)
+    a = gen_list_val(stages,scale)
+
+    df = pd.DataFrame({'c':c, 'a':a}, index = inno)
+
+    # threshold values
+    C_agi = sum(c)*0.8 
+    A_aligned = sum(a)*0.8
+
+    # print the capabilities 
+    print('Capabilities vector:')
+    print(c)
+    print('Alignment vector')
+    print(a)
+    print('AGI threshold')
+    print(C_agi)
+    print('Alignment threshold')
+    print(A_aligned)
+
+    return df, c, a, C_agi, A_aligned 
